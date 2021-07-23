@@ -1,0 +1,34 @@
+[alias]
+       ci = duet-commit
+       st = status
+       br = branch
+       co = checkout
+       p  = pull
+       create-pull-request = !sh -c 'stash pull-request $0 $@'
+        # Select the commit to fixup compared to master
+       pecofix = !"git commit --fixup $(git log --oneline master..HEAD | peco | head -n1 | awk '{print $1}')"
+       lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+       fi = !"git commit --fixup $(git log --graph --color=always --pretty=format:\"%C(auto)%h%d %s %C(black)%C(bold)%cr\" | fzf --ansi --no-sort --reverse | grep -o \"[a-f0-9]\\{7\\}\")"
+       re = !"git rebase -i $(git log --graph --color=always --pretty=format:\"%C(auto)%h%d %s %C(black)%C(bold)%cr\" | fzf --ansi --no-sort --reverse | grep -o \"[a-f0-9]\\{7\\}\")"
+       tagcom = rev-list -n 1
+[user]
+       name = <User Name>
+       email = user@mail.com
+       signingkey = <gpg key>
+[url "https://"]
+  insteadOf = git://
+[filter "lfs"]
+       clean = git-lfs clean -- %f
+       smudge = git-lfs smudge -- %f
+       process = git-lfs filter-process
+       required = true
+[diff "gpg"]
+    textconv = gpg --no-tty --decrypt
+[core]
+    editor = 'nvim'
+[pull]
+	ff = only
+[rebase]
+	autosquash = true
+[code]
+	hooksPath = .githooks
