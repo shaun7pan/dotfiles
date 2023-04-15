@@ -4,6 +4,7 @@
        br = branch
        co = checkout
        p  = pull
+       cm = commit
        create-pull-request = !sh -c 'stash pull-request $0 $@'
         # Select the commit to fixup compared to master
        pecofix = !"git commit --fixup $(git log --oneline master..HEAD | peco | head -n1 | awk '{print $1}')"
@@ -12,11 +13,13 @@
        re = !"git rebase -i $(git log --graph --color=always --pretty=format:\"%C(auto)%h%d %s %C(black)%C(bold)%cr\" | fzf --ansi --no-sort --reverse | grep -o \"[a-f0-9]\\{7\\}\")"
        tagcom = rev-list -n 1
 [user]
-       name = <User Name>
-       email = user@mail.com
-       signingkey = <gpg key>
+       name = Pan Shaun
+       email = Shaun.Pan@fil.com
+       signingkey = mykey
 [url "https://"]
   insteadOf = git://
+[url "http://gopkg.in"]
+  insteadOf = https://gopkg.in
 [filter "lfs"]
        clean = git-lfs clean -- %f
        smudge = git-lfs smudge -- %f
@@ -25,10 +28,31 @@
 [diff "gpg"]
     textconv = gpg --no-tty --decrypt
 [core]
-    editor = 'nvim'
+	  ; editor = nvim
+    pager = delta
+	  hooksPath = .githooks
 [pull]
 	ff = only
 [rebase]
 	autosquash = true
-[code]
-	hooksPath = .githooks
+
+[interactive]
+    ; diffFilter = delta --color-only --features=interactive
+
+[delta]
+    ; features = side-by-side line-numbers decorations
+    ; syntax-theme = Dracula
+    ; plus-style = syntax darkslategray
+    ; minus-style = syntax dimgray
+
+[delta "decorations"]
+    commit-decoration-style = bold yellow box ul
+    file-style = bold yellow ul
+    file-decoration-style = none
+    hunk-header-decoration-style = cyan box ul
+
+[delta "line-numbers"]
+    line-numbers-left-style = dimgray
+    line-numbers-right-style = darkslategray
+    line-numbers-minus-style = 124
+    
