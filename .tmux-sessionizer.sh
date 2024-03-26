@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 #
+#
+current_session_name=$(tmux display-message -p '#S')
+if [[ "$current_session_name" == "popup" ]]; then
+  exit 0
+fi
+
 if [[ $# -eq 1 ]]; then
   selected=$1
 else

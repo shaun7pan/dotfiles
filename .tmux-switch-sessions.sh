@@ -1,4 +1,9 @@
-#/usr/bin/env bash
+#!/usr/bin/env bash
+
+current_session_name=$(tmux display-message -p '#S')
+if [[ "$current_session_name" == "popup" ]]; then
+  exit 0
+fi
 
 selected_name=$(tmux list-sessions -F '#{session_name}' | fzf-tmux -p 60%,50%)
 
