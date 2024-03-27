@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-#
-#
+
+# set -eEuo pipefail
+
 current_session_name=$(tmux display-message -p '#S')
 if [[ "$current_session_name" == "popup" ]]; then
   exit 0
