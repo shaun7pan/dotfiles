@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 # set -eEuo pipefail
+# set -x
 
-current_session_name=$(tmux display-message -p '#S')
+current_session_name=$(tmux display-message -p '#S' 2>&1 >/dev/null)
 if [[ "$current_session_name" == "popup" ]]; then
   exit 0
 fi
@@ -10,7 +11,7 @@ fi
 if [[ $# -eq 1 ]]; then
   selected=$1
 else
-  selected=$(find "$HOME"/.config "$HOME"/development "$HOME"/development/filcf "$HOME"/development/FIL-Enterprise-Prod /Users/a560827/myworkspace -mindepth 1 -maxdepth 1 -type d | fzf-tmux -p 60%,50%)
+  selected=$(find "$HOME"/.config "$HOME"/development "$HOME"/development/FIL-Enterprise-Prod /Users/a560827/myworkspace -mindepth 1 -maxdepth 1 -type d | fzf-tmux -p 60%,50%)
 fi
 
 if [[ -z $selected ]]; then
