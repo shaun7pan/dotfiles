@@ -121,18 +121,17 @@ PATH="/opt/homebrew/opt/gawk/libexec/gnubin:$PATH"
 [ -f /opt/homebrew/etc/profile.d/autojump.sh ] && . /opt/homebrew/etc/profile.d/autojump.sh
 
 j() {
-  set -x
   local preview_cmd="ls {2..}"
   if command -v exa &>/dev/null; then
     preview_cmd="exa -l {0}"
   fi
 
   if [[ $# -eq 0 ]]; then
-    cd "$(autojump -s | awk -F: '/[0-9]:/ {print $1, $2}' | sort -k1gr | awk '$1 ~ /[0-9]/ && $2 ~ /^\s*\// {print $1, $2}' | fzf --height 40% --reverse --inline-info --preview "$preview_cmd" --preview-window down:50% | cut -d$' ' -f2- | sed 's/^\s*//')"
+    ## fix https://www.shellcheck.net/wiki/SC2164
+    cd "$(autojump -s | awk -F: '/[0-9]:/ {print $1, $2}' | sort -k1gr | awk '$1 ~ /[0-9]/ && $2 ~ /^\s*\// {print $1, $2}' | fzf --height 40% --reverse --inline-info --preview "$preview_cmd" --preview-window down:50% | cut -d$' ' -f2- | sed 's/^\s*//')" || exit
   else
     cd $(autojump $@) || exit
   fi
-  set +x
 }
 
 # Check if remote repo is existed and clone it if not.
