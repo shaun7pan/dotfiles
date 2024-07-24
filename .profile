@@ -122,8 +122,8 @@ PATH="/opt/homebrew/opt/gawk/libexec/gnubin:$PATH"
 
 j() {
   local preview_cmd="ls {2..}"
-  if command -v exa &>/dev/null; then
-    preview_cmd="exa -l {0}"
+  if command -v eza &>/dev/null; then
+    preview_cmd="eza -l -a --no-user --color=always {2}"
   fi
 
   if [[ $# -eq 0 ]]; then
