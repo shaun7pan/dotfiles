@@ -13,12 +13,12 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 
 ## gpg-agent
 if ! [ -S "$HOME/.gnupg/S.gpg-agent" ]; then
-  eval "$(gpg-agent --daemon)"
+	eval "$(gpg-agent --daemon)"
 fi
 
 ## git completion
 if [ -f ~/.git-completion.bash ]; then
-  . ~/.git-completion.bash
+	. ~/.git-completion.bash
 fi
 
 ## git prompt
@@ -49,7 +49,8 @@ source /opt/homebrew/etc/bash_completion.d/pass
 alias mysecrets='PASSWORD_STORE_DIR=~/.my_secrets pass'
 
 ## ssh agent
-source ~/.start-ssh-agent
+### disable ssh agent for now since no use case
+# source ~/.start-ssh-agent
 
 alias s="source ~/.profile"
 
@@ -72,21 +73,13 @@ alias ts='~/dotfiles/.tmux-switch-sessions.sh'
 
 #check out selected
 gc() {
-  git checkout "$(git branch -r | fzf --height 40% --reverse --inline-info | cut -d '/' -f 2)"
+	git checkout "$(git branch -r | fzf --height 40% --reverse --inline-info | cut -d '/' -f 2)"
 }
 
 #delete selected
 gdb() {
-  git branch -D "$(git branch | fzf --height 40% --reverse --inline-info | tr -d ' ')"
+	git branch -D "$(git branch | fzf --height 40% --reverse --inline-info | tr -d ' ')"
 }
-
-#FILK8S-397# k8s config
-export K8S_CONFIG_PATH=$HOME/development/FIL-Enterprise-Prod/TAPP200073_k8s-config
-export K8S_CUSTOMERS_PATH=$HOME/development/FIL-Enterprise-Prod/TAPP200073_k8s-customers
-export K8S_CUSTOMERS="$(cat "${K8S_CUSTOMERS_PATH}/customers/np1.json")"
-
-## krew
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 ## fzf
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
@@ -121,134 +114,134 @@ PATH="/opt/homebrew/opt/gawk/libexec/gnubin:$PATH"
 [ -f /opt/homebrew/etc/profile.d/autojump.sh ] && . /opt/homebrew/etc/profile.d/autojump.sh
 
 j() {
-  local preview_cmd="ls {2..}"
-  if command -v eza &>/dev/null; then
-    preview_cmd="eza -l -a --no-user --color=always {2}"
-  fi
+	local preview_cmd="ls {2..}"
+	if command -v eza &>/dev/null; then
+		preview_cmd="eza -l -a --no-user --color=always {2}"
+	fi
 
-  if [[ $# -eq 0 ]]; then
-    ## fix https://www.shellcheck.net/wiki/SC2164
-    cd "$(autojump -s | awk -F: '/[0-9]:/ {print $1, $2}' | sort -k1gr | awk '$1 ~ /[0-9]/ && $2 ~ /^\s*\// {print $1, $2}' | fzf --height 40% --reverse --inline-info --preview "$preview_cmd" --preview-window down:50% | cut -d$' ' -f2- | sed 's/^\s*//')" || exit
-  else
-    cd $(autojump $@) || exit
-  fi
+	if [[ $# -eq 0 ]]; then
+		## fix https://www.shellcheck.net/wiki/SC2164
+		cd "$(autojump -s | awk -F: '/[0-9]:/ {print $1, $2}' | sort -k1gr | awk '$1 ~ /[0-9]/ && $2 ~ /^\s*\// {print $1, $2}' | fzf --height 40% --reverse --inline-info --preview "$preview_cmd" --preview-window down:50% | cut -d$' ' -f2- | sed 's/^\s*//')" || exit
+	else
+		cd $(autojump $@) || exit
+	fi
 }
 
 # Check if remote repo is existed and clone it if not.
 ffo() {
-  local dir
-  local gh_token
-  local file
-  local now
-  gh_token=$(mysecrets github-token)
-  file="$HOME/.github-repos.txt"
+	local dir
+	local gh_token
+	local file
+	local now
+	gh_token=$(mysecrets github-token)
+	file="$HOME/.github-repos.txt"
 
-  if [ ! -f "$file" ] || [ -z "$(cat "${file}")" ] || [ "$(find "$file" -mtime +1)" ]; then
-    SEARCH_STR="FIL-Enterprise-Prod/TSWM208037+in:full_name" GH_TOKEN=${gh_token} FILE_PATH=${file} cargo run --manifest-path "$HOME"/development/rust-fetch-repos/Cargo.toml --quiet
-  fi
-  modified=$(stat -f "%m%t%Sm %N" "${file}" | cut -f2 | cut -d'/' -f1)
-  now=$(date +'%b %d %H:%M:%S %Y')
-  repo_path=$(cat "${file}" | fzf +m --header "[Updated @ ${now}]")
+	if [ ! -f "$file" ] || [ -z "$(cat "${file}")" ] || [ "$(find "$file" -mtime +1)" ]; then
+		SEARCH_STR="FIL-Enterprise-Prod/TSWM208037+in:full_name" GH_TOKEN=${gh_token} FILE_PATH=${file} cargo run --manifest-path "$HOME"/development/rust-fetch-repos/Cargo.toml --quiet
+	fi
+	modified=$(stat -f "%m%t%Sm %N" "${file}" | cut -f2 | cut -d'/' -f1)
+	now=$(date +'%b %d %H:%M:%S %Y')
+	repo_path=$(cat "${file}" | fzf +m --header "[Updated @ ${now}]")
 
-  [ ! -d "$HOME/development/${repo_path}" ] &&
-    git clone https://"${gh_token}"@github.com/"${repo_path}".git ~/development/"${repo_path}"
-  [ -n "$repo_path" ] && tt "$HOME/development/${repo_path}"
+	[ ! -d "$HOME/development/${repo_path}" ] &&
+		git clone https://"${gh_token}"@github.com/"${repo_path}".git ~/development/"${repo_path}"
+	[ -n "$repo_path" ] && tt "$HOME/development/${repo_path}"
 }
 
 # Check if remote repo is existed and clone it if not.
 ff() {
-  local dir
-  local gh_token
-  local file
-  local now
-  gh_token=$(mysecrets github-token)
-  file="$HOME/.github-repos-new.txt"
+	local dir
+	local gh_token
+	local file
+	local now
+	gh_token=$(mysecrets github-token)
+	file="$HOME/.github-repos-new.txt"
 
-  if [ ! -f "$file" ] || [ -z "$(cat "${file}")" ] || [ "$(find "$file" -mtime +1)" ]; then
-    SEARCH_STR="FIL-Enterprise-Prod/TAPP200073+in:full_name" GH_TOKEN=${gh_token} FILE_PATH=${file} cargo run --manifest-path "$HOME"/development/rust-fetch-repos/Cargo.toml >/dev/null 2>/dev/null
-  fi
-  modified=$(stat -f "%m%t%Sm %N" "${file}" | cut -f2 | cut -d'/' -f1)
-  now=$(date +'%b %d %H:%M:%S %Y')
-  repo_path=$(cat "${file}" | fzf +m --header "[Updated @ ${now}]")
+	if [ ! -f "$file" ] || [ -z "$(cat "${file}")" ] || [ "$(find "$file" -mtime +1)" ]; then
+		SEARCH_STR="FIL-Enterprise-Prod/TAPP200073+in:full_name" GH_TOKEN=${gh_token} FILE_PATH=${file} cargo run --manifest-path "$HOME"/development/rust-fetch-repos/Cargo.toml >/dev/null 2>/dev/null
+	fi
+	modified=$(stat -f "%m%t%Sm %N" "${file}" | cut -f2 | cut -d'/' -f1)
+	now=$(date +'%b %d %H:%M:%S %Y')
+	repo_path=$(cat "${file}" | fzf +m --header "[Updated @ ${now}]")
 
-  [ ! -d "$HOME/development/${repo_path}" ] &&
-    git clone https://"${gh_token}"@github.com/"${repo_path}".git ~/development/"${repo_path}"
-  [ -n "$repo_path" ] && tt "$HOME/development/${repo_path}"
+	[ ! -d "$HOME/development/${repo_path}" ] &&
+		git clone https://"${gh_token}"@github.com/"${repo_path}".git ~/development/"${repo_path}"
+	[ -n "$repo_path" ] && tt "$HOME/development/${repo_path}"
 }
 
 # Check if remote repo is existed and clone it if not.
 fb() {
-  local dir
-  local username
-  local password
-  local file
-  local now
-  local pid
-  username=$(mysecrets ad-username)
-  password=$(mysecrets ad-password)
-  file="$HOME/.repos.json"
+	local dir
+	local username
+	local password
+	local file
+	local now
+	local pid
+	username=$(mysecrets ad-username)
+	password=$(mysecrets ad-password)
+	file="$HOME/.repos.json"
 
-  if [ ! -f "$file" ] || [ -z "$(cat "${file}")" ] || [ "$(find "$file" -mtime +1)" ]; then
-    echo "{}" >"${file}"
-    for pid in filcf filk8s; do
-      curl -su "${username}:${password}" \
-        -L https://bitbucket.bip.uk.fid-intl.com/rest/api/1.0/projects/${pid^^}/repos?limit=10000 |
-        jq -r --arg pid $pid '.| {pid: "'$pid'", value: [.values[].name]}'
-    done | jq -s '.| map(.pid + "/" + .value[])' >"${file}"
-  fi
-  modified=$(stat -f "%m%t%Sm %N" "${file}" | cut -f2 | cut -d'/' -f1)
-  now=$(date +'%b %d %H:%M:%S %Y')
-  repo_path=$(jq -r '.[]' "${file}" | fzf +m --header "[Updated @ ${now}]")
-  # pid=$(jq -r '.[]| select(.value[]| contains ("'${dir}'"))|.pid' "${file}")
+	if [ ! -f "$file" ] || [ -z "$(cat "${file}")" ] || [ "$(find "$file" -mtime +1)" ]; then
+		echo "{}" >"${file}"
+		for pid in filcf filk8s; do
+			curl -su "${username}:${password}" \
+				-L https://bitbucket.bip.uk.fid-intl.com/rest/api/1.0/projects/${pid^^}/repos?limit=10000 |
+				jq -r --arg pid $pid '.| {pid: "'$pid'", value: [.values[].name]}'
+		done | jq -s '.| map(.pid + "/" + .value[])' >"${file}"
+	fi
+	modified=$(stat -f "%m%t%Sm %N" "${file}" | cut -f2 | cut -d'/' -f1)
+	now=$(date +'%b %d %H:%M:%S %Y')
+	repo_path=$(jq -r '.[]' "${file}" | fzf +m --header "[Updated @ ${now}]")
+	# pid=$(jq -r '.[]| select(.value[]| contains ("'${dir}'"))|.pid' "${file}")
 
-  [ ! -d "$HOME/development/${repo_path}" ] &&
-    git clone ssh://git@bitbucket.bip.uk.fid-intl.com/"${repo_path}".git ~/development/"${repo_path}"
-  [ -n "$repo_path" ] && tt "$HOME/development/${repo_path}"
+	[ ! -d "$HOME/development/${repo_path}" ] &&
+		git clone ssh://git@bitbucket.bip.uk.fid-intl.com/"${repo_path}".git ~/development/"${repo_path}"
+	[ -n "$repo_path" ] && tt "$HOME/development/${repo_path}"
 }
 
 # open bitbucket repo url
 gg() {
-  local file
-  # file_old="$HOME/.github-repos.txt"
-  file_new="$HOME/.github-repos-new.txt"
-  # org_repo_path=$(cat "${file_old}" "${file_new}" | fzf +m)
-  org_repo_path=$(cat "${file_new}" | fzf +m)
-  url="https://github.com/${org_repo_path}.git"
-  [ ! -z "$org_repo_path" ] && open "$url"
+	local file
+	# file_old="$HOME/.github-repos.txt"
+	file_new="$HOME/.github-repos-new.txt"
+	# org_repo_path=$(cat "${file_old}" "${file_new}" | fzf +m)
+	org_repo_path=$(cat "${file_new}" | fzf +m)
+	url="https://github.com/${org_repo_path}.git"
+	[ ! -z "$org_repo_path" ] && open "$url"
 }
 
 # open bitbucket repo url
 gb() {
-  local repo
-  local url
-  local file
-  file="$HOME/.repos.json"
-  pid_repo_combin=$(jq -r '.[]' "${file}" | fzf +m)
-  pid=$(echo "$pid_repo_combin" | awk -F'/' '{print $1}')
-  repo_name=$(echo "$pid_repo_combin" | awk -F'/' '{print $2}')
-  url="https://bitbucket.bip.uk.fid-intl.com/projects/$pid/repos/${repo_name}/browse"
-  [ ! -z "$repo_name" ] && open "$url"
+	local repo
+	local url
+	local file
+	file="$HOME/.repos.json"
+	pid_repo_combin=$(jq -r '.[]' "${file}" | fzf +m)
+	pid=$(echo "$pid_repo_combin" | awk -F'/' '{print $1}')
+	repo_name=$(echo "$pid_repo_combin" | awk -F'/' '{print $2}')
+	url="https://bitbucket.bip.uk.fid-intl.com/projects/$pid/repos/${repo_name}/browse"
+	[ ! -z "$repo_name" ] && open "$url"
 }
 
 # c - browse chrome history
 c() {
-  local cols sep google_history open
-  cols=$((COLUMNS / 3))
-  sep='{::}'
+	local cols sep google_history open
+	cols=$((COLUMNS / 3))
+	sep='{::}'
 
-  if [ "$(uname)" = "Darwin" ]; then
-    google_history="$HOME/Library/Application Support/Google/Chrome/Default/History"
-    open=open
-  else
-    google_history="$HOME/.config/google-chrome/Default/History"
-    open=xdg-open
-  fi
-  cp -f "$google_history" /tmp/h
-  sqlite3 -separator $sep /tmp/h \
-    "select substr(title, 1, $cols), url
+	if [ "$(uname)" = "Darwin" ]; then
+		google_history="$HOME/Library/Application Support/Google/Chrome/Default/History"
+		open=open
+	else
+		google_history="$HOME/.config/google-chrome/Default/History"
+		open=xdg-open
+	fi
+	cp -f "$google_history" /tmp/h
+	sqlite3 -separator $sep /tmp/h \
+		"select substr(title, 1, $cols), url
      from urls order by last_visit_time desc" |
-    awk -F $sep '{printf "%-'$cols's  \x1b[36m%s\x1b[m\n", $1, $2}' |
-    fzf --ansi --multi | sed 's#.*\(https*://\)#\1#' | xargs $open >/dev/null 2>/dev/null
+		awk -F $sep '{printf "%-'$cols's  \x1b[36m%s\x1b[m\n", $1, $2}' |
+		fzf --ansi --multi | sed 's#.*\(https*://\)#\1#' | xargs $open >/dev/null 2>/dev/null
 }
 
 # open bookmark
@@ -303,9 +296,13 @@ zproxy
 ## starship prompt
 eval "$(starship init bash)"
 
+## zoxide
+eval "$(zoxide init bash)"
+
 alias mysecrets='PASSWORD_STORE_DIR=~/.my_secrets pass'
 
 alias ga='git add'
+alias gl='git log -1'
 alias glo='git log --oneline --decorate'
 # alias gd='git diff'
 alias gs='git status'
@@ -319,10 +316,7 @@ export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 
 if which pyenv >/dev/null; then eval "$(pyenv init -)"; fi
-if which pyenv-virtualenv-init >/dev/null; then eval "$(pyenv virtualenv-init -)"; fi
+# if which pyenv-virtualenv-init >/dev/null; then eval "$(pyenv virtualenv-init -)"; fi
 
 [[ -r "/opt/homebrew/etc/profile.d/bash_completion.sh" ]] && . "/opt/homebrew/etc/profile.d/bash_completion.sh"
 . "$HOME/.cargo/env"
-
-# Add Visual Studio Code (code)
-export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"

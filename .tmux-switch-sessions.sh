@@ -9,6 +9,11 @@ fi
 
 selected_name=$(tmux list-sessions -F '#{session_name}' | fzf-tmux -p 60%,50%)
 
+# if no session is selected, exit the script
+if [[ -z $selected_name ]]; then
+  exit 0
+fi
+
 # if in tmux, switch client to session
 if [[ -n $selected_name ]]; then
   if [[ "$TERM" =~ "screen".* ]]; then
