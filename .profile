@@ -82,6 +82,9 @@ gdb() {
 }
 
 ## fzf
+# Set up fzf key bindings and fuzzy completion
+eval "$(fzf --bash)"
+
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
