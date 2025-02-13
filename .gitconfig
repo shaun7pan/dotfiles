@@ -29,7 +29,6 @@
     textconv = gpg --no-tty --decrypt
 [core]
 	  ; editor = nvim
-    pager = delta
 	  hooksPath = .githooks
 [pull]
 	ff = only
